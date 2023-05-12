@@ -20,18 +20,54 @@ public class MaxMinHeap {
         
     }
 
+    /**
+     * @param heap
+     * @param i
+     */
     public void heapify(int[] heap, int i) {
-        int leftChild = getLeftChild(heap, i);
-        int rightChild = getRightChild(heap, i);
 
-        
+        if(getIdDepth(i) % 2 == 0) {
+            maxHeapify(heap, i);
+        }
+
+        else {
+            minHeapify(heap, i);
+        }
     }
 
     public void maxHeapify(int[] heap, int i) {
+        int maxDescendantId = getMaxDescendantId(heap, i, 2);
 
+        if(hasKids(heap, i)) {
+            if(maxDescendantId != i) {
+                swap(heap, i, maxDescendantId);
+
+                if(maxDescendantId > getRightChildId(i)) {
+
+                    if(heap[maxDescendantId] > heap[getParentId(maxDescendantId)]) {
+                        swap(heap, getParentId(maxDescendantId), maxDescendantId);
+                    }
+                    heapify(heap, maxDescendantId);
+                }
+            }
+        }
     }
-    public void minHeapify(int[] heap, int i) {
+    public void minHeapify(int[] heap, int i) {  
+        int minDescendantId = getMinDescendantId(heap, i, 2);
 
+        if(hasKids(heap, i)) {
+            if(minDescendantId != i) {
+                swap(heap, i, minDescendantId);
+
+                if(minDescendantId > getRightChildId(i)) {
+
+                    if(heap[minDescendantId] > heap[getParentId(minDescendantId)]) {
+                        swap(heap, getParentId(minDescendantId), minDescendantId);
+                    }
+                    heapify(heap, minDescendantId);
+                }
+            }
+        }
     }
 
 
@@ -41,20 +77,69 @@ public class MaxMinHeap {
     public int getLeftChildId(int i) {
         return i * 2 + 1;
     }
-    public int getRightChild(int[] heap, int i) {
-        return heap[getRightChildId(i)];
-    }
-    public int getLeftChild(int[] heap, int i) {
-        return heap[getLeftChildId(i)];
+    public int getParentId(int i) {
+        if(i % 2 == 0) {
+            return ((i - 2) / 2);
+        }
+        return ((i - 1) / 2);
     }
 
+    /**
+     * @param heap
+     * @param i
+     * @param generations
+     * @return
+     */
+    public int getMaxDescendantId(int[] heap, int i, int generations) {
+        if(i > heap.length - 1) {
+            return Integer.MIN_VALUE;
+        }
+
+        if(generations == 0 || !(hasKids(heap, i))) {
+            return i;
+        }
+
+        return Math.max(i, Math.max(getMaxDescendantId(heap, getLeftChildId(i), generations--), getMaxDescendantId(heap, getRightChildId(i), generations--)));
+    }
+    
+    /**
+     * @param heap
+     * @param i
+     * @param generations
+     * @return
+     */
+    public int getMinDescendantId(int[] heap, int i, int generations) {
+        if(i > heap.length - 1) {
+            return Integer.MAX_VALUE;
+        }
+
+        if(generations == 0 || !(hasKids(heap, i))) {
+            return i;
+        }
+
+        return Math.min(i, Math.min(getMaxDescendantId(heap, getLeftChildId(i), generations--), getMaxDescendantId(heap, getRightChildId(i), generations--)));
+    }
+
+    /**
+     * @param heap
+     * @param i
+     * @param j
+     */
     public static void swap(int[] heap, int i, int j) {
         int temp = heap[i];
         heap[i] = heap[j];
         heap[j] = temp;
     }
 
+    /**
+     * @param i
+     * @return
+     */
     public int getIdDepth(int i) {
         return (int) Math.floor(Math.log(i + 1) / Math.log(2));
+    }
+
+    public boolean hasKids(int[] heap, int i) {
+        return (getLeftChildId(i) > heap.length - 1);
     }
 }
