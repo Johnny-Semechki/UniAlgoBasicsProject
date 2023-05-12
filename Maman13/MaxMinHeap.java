@@ -42,7 +42,7 @@ public class MaxMinHeap {
             if(maxDescendantId != i) {
                 swap(heap, i, maxDescendantId);
 
-                if(maxDescendantId > getRightChildId(i)) {
+                if(maxDescendantId > getRightChildId(i)) { //check if maxDescendantId is grandkid
 
                     if(heap[maxDescendantId] > heap[getParentId(maxDescendantId)]) {
                         swap(heap, getParentId(maxDescendantId), maxDescendantId);
@@ -59,7 +59,7 @@ public class MaxMinHeap {
             if(minDescendantId != i) {
                 swap(heap, i, minDescendantId);
 
-                if(minDescendantId > getRightChildId(i)) {
+                if(minDescendantId > getRightChildId(i)) { //check if minDescendantId is grandkid
 
                     if(heap[minDescendantId] > heap[getParentId(minDescendantId)]) {
                         swap(heap, getParentId(minDescendantId), minDescendantId);
@@ -70,14 +70,43 @@ public class MaxMinHeap {
         }
     }
 
+    public int heapExtractMax() {
+        int maxVal = _heapArr[0];
+        System.out.println("Max value of this heap is: " + maxVal);
+        return maxVal;
+    }
+    public int heapExtractMin() {
+        int minVal = Math.min(_heapArr[1], _heapArr[2]);
+        System.out.println("Min value of this heap is: " + minVal);
+        return minVal;
+    }
 
-    public int getRightChildId(int i) {
+    public void heapDelete(int i) {
+        int newHeap[] = new int[_heapArr.length - 1];
+
+        int j;
+        for(j = 0; j < i; j++) {
+            newHeap[j] = _heapArr[j];
+        }
+        if(i == 0) {
+            j = 0;
+        }
+        for(int k = i; k < newHeap.length; k++) {
+            newHeap[k] = _heapArr[j];
+            j++;
+        }
+
+        _heapArr = newHeap;
+        heapify(_heapArr, i);
+    }
+
+    public static int getRightChildId(int i) {
         return i * 2 + 2;
     }
-    public int getLeftChildId(int i) {
+    public static int getLeftChildId(int i) {
         return i * 2 + 1;
     }
-    public int getParentId(int i) {
+    public static int getParentId(int i) {
         if(i % 2 == 0) {
             return ((i - 2) / 2);
         }
@@ -90,7 +119,7 @@ public class MaxMinHeap {
      * @param generations
      * @return
      */
-    public int getMaxDescendantId(int[] heap, int i, int generations) {
+    public static int getMaxDescendantId(int[] heap, int i, int generations) {
         if(i > heap.length - 1) {
             return Integer.MIN_VALUE;
         }
@@ -108,7 +137,7 @@ public class MaxMinHeap {
      * @param generations
      * @return
      */
-    public int getMinDescendantId(int[] heap, int i, int generations) {
+    public static int getMinDescendantId(int[] heap, int i, int generations) {
         if(i > heap.length - 1) {
             return Integer.MAX_VALUE;
         }
@@ -135,11 +164,15 @@ public class MaxMinHeap {
      * @param i
      * @return
      */
-    public int getIdDepth(int i) {
+    public static int getIdDepth(int i) {
         return (int) Math.floor(Math.log(i + 1) / Math.log(2));
     }
 
-    public boolean hasKids(int[] heap, int i) {
+    public static boolean hasKids(int[] heap, int i) {
         return (getLeftChildId(i) > heap.length - 1);
+    }
+
+    public void setHeapArr(int[] newHeapArr) {
+
     }
 }
