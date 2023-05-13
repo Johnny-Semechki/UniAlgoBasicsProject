@@ -16,8 +16,16 @@ public class MaxMinHeap {
     private int[] _heapArr;
     private int _heapDepth;
 
-    public void BuildHeap() {
-        
+    /**
+     * @param arr
+     */
+    public MaxMinHeap(int[] arr) {
+        for(int i = arr.length / 2 - 1; i >= 0; i--) {
+            heapify(arr, i);
+        }
+
+        setHeapArr(arr);
+        _heapDepth = getIdDepth(arr.length - 1);
     }
 
     /**
@@ -35,6 +43,10 @@ public class MaxMinHeap {
         }
     }
 
+    /**
+     * @param heap
+     * @param i
+     */
     public void maxHeapify(int[] heap, int i) {
         int maxDescendantId = getMaxDescendantId(heap, i, 2);
 
@@ -52,6 +64,10 @@ public class MaxMinHeap {
             }
         }
     }
+    /**
+     * @param heap
+     * @param i
+     */
     public void minHeapify(int[] heap, int i) {  
         int minDescendantId = getMinDescendantId(heap, i, 2);
 
@@ -96,7 +112,7 @@ public class MaxMinHeap {
             j++;
         }
 
-        _heapArr = newHeap;
+        setHeapArr(newHeap);;
         heapify(_heapArr, i);
     }
 
@@ -173,6 +189,9 @@ public class MaxMinHeap {
     }
 
     public void setHeapArr(int[] newHeapArr) {
-
+        _heapArr = new int[newHeapArr.length];
+        for(int i = 0; i < _heapArr.length; i++) {
+            _heapArr[i] = newHeapArr[i];
+        }
     }
 }
