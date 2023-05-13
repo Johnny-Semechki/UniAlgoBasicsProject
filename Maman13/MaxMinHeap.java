@@ -211,16 +211,90 @@ public class MaxMinHeap {
 
     }
 
-    public static void prinTree(int[] heapArr) {
-        int maxDepth = getIdDepth(heapArr.length - 1);
-        int currentDepth = 0;
-        for(int i = 0; i < heapArr.length; i++) {
+    public void prinTree(int[] heapArr) {
+    int maxDepth = getIdDepth(heapArr.length - 1);
 
+        String[] strArr = new String[heapArr.length];
+        for(int i = 0; i < heapArr.length; i++) {
+            strArr[i] = String.valueOf(heapArr[i]);
         }
-        
+
+        int initialSpaces, spacesAfterNode, spacesBetweenLinks;
+        String currLine, nextLine;
+        String str1 = "/", str2 = "\\";
+        for(int j = 0; j <= maxDepth; j++) {
+            
+            initialSpaces = 0;
+            for(int k = j + 1; k < maxDepth; k++) {
+                initialSpaces += strArr[getLevelStartId(k)].length() + 1;
+            }
+
+            currLine = String.format("%1$" + (initialSpaces + 1) + "s", "");
+            nextLine = String.format("%1$" + initialSpaces + "s", "");
+
+            for(int l = getLevelStartId(j); l < getLevelStartId(j + 1); l++) {
+
+                spacesBetweenLinks = calcSpacedLinks(strArr, l);
+
+                if(isEven(l)) {
+                    if(spacesBetweenLinks > strArr[l].length() + 1) {
+                        currLine += String.format("%1$" + ((spacesBetweenLinks - strArr[l].length()) / 2) + "s", "");
+                    }
+                    currLine += strArr[l] + "";
+                    nextLine += str1 + String.format("%1$" + spacesBetweenLinks + "s", "") + str2;
+                }
+                else {
+                    spacesAfterNode = calcSpacesAfterOdd(strArr, l);
+
+                    currLine += strArr[l] + String.format("%1$" + spacesAfterNode + "s", "");
+                    nextLine += str1 + String.format("%1$" + spacesBetweenLinks + "s", "") + str2 + 
+                    String.format("%1$" + (spacesAfterNode - 2) + "s", "");
+                }
+            }
+
+            System.out.println(currLine);
+            if(j != maxDepth) {
+                System.out.println(nextLine);
+            }
+        } 
     }
 
     public static boolean isEven(int num) {
         return (num % 2 == 0);
+    }
+
+    public int getLevelStartId(int level) {
+        return (int) Math.pow(2, level) - 1;
+    }
+
+    public static int calcSpacedLinks(String[] heap, int i) {
+        int grandKid1Length = 0, grandKid2Length = 0;
+
+        int grandKid1Id = getLeftChildId(getRightChildId(i)), 
+        grandKid2Id = getRightChildId(getLeftChildId(i));
+
+        if(grandKid1Id < heap.length) {
+            grandKid1Length = heap[grandKid1Id].length();
+        }
+        if(grandKid2Id < heap.length) {
+            grandKid2Length = heap[grandKid2Id].length();
+        }
+
+        return Math.max(heap[i].length(), grandKid1Length + grandKid2Length + 1);
+    }
+
+    public int calcSpacesAfterOdd(String[] heap, int i) {
+        int rightLength = 0, otherNodeLength = 0;
+
+        int rightId = getRightChildId(i), otherNodeId = getLeftChildId(i + 1);
+
+        if(rightId < heap.length) {
+            rightLength = heap[rightId].length();
+        }
+        if(otherNodeId < heap.length) {
+            otherNodeLength = heap[otherNodeId].length();
+        }
+
+        return Math.max(heap[getParentId(i)].length(), rightLength + otherNodeLength + 1) + 2;
     }
 }
