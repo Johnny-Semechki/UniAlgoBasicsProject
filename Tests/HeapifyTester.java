@@ -10,7 +10,7 @@ public class HeapifyTester {
     public void testMaxHeapify() {
         int[] heap = {9, 7, 6, 5, 3, 2, 1};
         int[] expected = {9, 7, 6, 5, 3, 2, 1};
-        Heap maxHeap = new Heap();
+        MaxMinHeap maxHeap = new MaxMinHeap();
         maxHeap.maxHeapify(heap, 0);
         assertArrayEquals(expected, heap);
 
@@ -34,7 +34,7 @@ public class HeapifyTester {
     public void testMinHeapify() {
         int[] heap = {1, 2, 3, 4, 5, 6, 7, 8, 9};
         int[] expected = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-        Heap minHeap = new Heap();
+        MaxMinHeap minHeap = new MaxMinHeap();
         minHeap.minHeapify(heap, 0);
         assertArrayEquals(expected, heap);
 

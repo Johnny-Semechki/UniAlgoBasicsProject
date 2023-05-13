@@ -1,5 +1,7 @@
 package Maman13;
 
+import javax.swing.text.AbstractDocument.LeafElement;
+
 /*
  * The class repressents a max-min heap by its array form.
  * 
@@ -26,7 +28,7 @@ public class MaxMinHeap {
      */
     public void heapify(int[] heap, int i) {
 
-        if(getIdDepth(i) % 2 == 0) {
+        if(isEven(getIdDepth(i))) {
             maxHeapify(heap, i);
         }
 
@@ -39,7 +41,7 @@ public class MaxMinHeap {
         int maxDescendantId = getMaxDescendantId(heap, i, 2);
 
         if(hasKids(heap, i)) {
-            if(maxDescendantId != i) {
+            if(maxDescendantId != i) { //Check if inputed node isn't bigger than its 2 generation descendants
                 swap(heap, i, maxDescendantId);
 
                 if(maxDescendantId > getRightChildId(i)) { //check if maxDescendantId is grandkid
@@ -56,7 +58,7 @@ public class MaxMinHeap {
         int minDescendantId = getMinDescendantId(heap, i, 2);
 
         if(hasKids(heap, i)) {
-            if(minDescendantId != i) {
+            if(minDescendantId != i) { //Check if inputed node isn't smaller than its 2 generation descendants
                 swap(heap, i, minDescendantId);
 
                 if(minDescendantId > getRightChildId(i)) { //check if minDescendantId is grandkid
@@ -120,15 +122,31 @@ public class MaxMinHeap {
      * @return
      */
     public static int getMaxDescendantId(int[] heap, int i, int generations) {
-        if(i > heap.length - 1) {
-            return Integer.MIN_VALUE;
-        }
-
         if(generations == 0 || !(hasKids(heap, i))) {
             return i;
         }
 
-        return Math.max(i, Math.max(getMaxDescendantId(heap, getLeftChildId(i), generations--), getMaxDescendantId(heap, getRightChildId(i), generations--)));
+        int maxLeftId = getMaxDescendantId(heap, getLeftChildId(i), generations--);
+        int maxRightId;
+        if(getRightChildId(i) < heap.length) { //checking if i has two kids
+
+            maxRightId = getMaxDescendantId(heap, getRightChildId(i), generations--);
+            if(heap[i] <= heap[maxLeftId]) {
+                if(heap[i] <= heap[maxRightId]) {
+                    return i;
+                }
+                return maxRightId;
+            }
+            if(heap[maxLeftId] <= heap[maxRightId]) {
+                return maxLeftId;
+            }
+            return maxRightId;
+        }
+
+        if(heap[i] <= heap[maxLeftId]) {
+            return i;
+        }
+        return maxLeftId;
     }
     
     /**
@@ -138,15 +156,32 @@ public class MaxMinHeap {
      * @return
      */
     public static int getMinDescendantId(int[] heap, int i, int generations) {
-        if(i > heap.length - 1) {
-            return Integer.MAX_VALUE;
-        }
 
         if(generations == 0 || !(hasKids(heap, i))) {
             return i;
         }
 
-        return Math.min(i, Math.min(getMaxDescendantId(heap, getLeftChildId(i), generations--), getMaxDescendantId(heap, getRightChildId(i), generations--)));
+        int minLeftId = getMinDescendantId(heap, getLeftChildId(i), generations--);
+        int minRightId;
+        if(getRightChildId(i) < heap.length) { //checking if i has two kids
+
+            minRightId = getMinDescendantId(heap, getRightChildId(i), generations--);
+            if(heap[i] <= heap[minLeftId]) {
+                if(heap[i] <= heap[minRightId]) {
+                    return i;
+                }
+                return minRightId;
+            }
+            if(heap[minLeftId] <= heap[minRightId]) {
+                return minLeftId;
+            }
+            return minRightId;
+        }
+
+        if(heap[i] <= heap[minLeftId]) {
+            return i;
+        }
+        return minLeftId;
     }
 
     /**
@@ -174,5 +209,18 @@ public class MaxMinHeap {
 
     public void setHeapArr(int[] newHeapArr) {
 
+    }
+
+    public static void prinTree(int[] heapArr) {
+        int maxDepth = getIdDepth(heapArr.length - 1);
+        int currentDepth = 0;
+        for(int i = 0; i < heapArr.length; i++) {
+
+        }
+        
+    }
+
+    public static boolean isEven(int num) {
+        return (num % 2 == 0);
     }
 }
