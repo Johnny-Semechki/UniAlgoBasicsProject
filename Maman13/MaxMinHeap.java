@@ -1,5 +1,7 @@
 package Maman13;
 
+import java.text.DecimalFormat;
+
 import javax.swing.text.AbstractDocument.LeafElement;
 
 /*
@@ -18,55 +20,63 @@ public class MaxMinHeap {
     private int[] _heapArr;
     private int _heapDepth;
 
-    public void BuildHeap() {
-        
+    public MaxMinHeap() {
+        int[] _heapArr = {12, 5, 11, 3, 10, 2, 9, 4, 8, 15, 7, 6};
+
+        for (int i = _heapArr.length/2; i >= 0; i--) {
+            heapify(i);
+        }
+
+        for (int i = 0; i < _heapArr.length ; i++) {
+            System.out.println(_heapArr[i]);
+        }
     }
 
     /**
-     * @param heap
+     * @param _heapArr
      * @param i
      */
-    public void heapify(int[] heap, int i) {
+    public void heapify(int i) {
 
         if(isEven(getIdDepth(i))) {
-            maxHeapify(heap, i);
+            maxHeapify(i);
         }
-
         else {
-            minHeapify(heap, i);
+            minHeapify(i);
         }
     }
 
-    public void maxHeapify(int[] heap, int i) {
-        int maxDescendantId = getMaxDescendantId(heap, i, 2);
+    public void maxHeapify(int i) {
+        if(hasKids(i)) {
+            int maxDescendantId = getMaxDecendentIndex(i);
 
-        if(hasKids(heap, i)) {
             if(maxDescendantId != i) { //Check if inputed node isn't bigger than its 2 generation descendants
-                swap(heap, i, maxDescendantId);
+                swap(i, maxDescendantId);
 
                 if(maxDescendantId > getRightChildId(i)) { //check if maxDescendantId is grandkid
 
-                    if(heap[maxDescendantId] > heap[getParentId(maxDescendantId)]) {
-                        swap(heap, getParentId(maxDescendantId), maxDescendantId);
+                    if(_heapArr[maxDescendantId] < _heapArr[getParentId(maxDescendantId)]) {
+                        swap(getParentId(maxDescendantId), maxDescendantId);
                     }
-                    heapify(heap, maxDescendantId);
+                    heapify(maxDescendantId);
                 }
             }
         }
     }
-    public void minHeapify(int[] heap, int i) {  
-        int minDescendantId = getMinDescendantId(heap, i, 2);
 
-        if(hasKids(heap, i)) {
+    public void minHeapify(int i) {  
+        if(hasKids(i)) {
+            int minDescendantId = getMinDecendentIndex(i);
+
             if(minDescendantId != i) { //Check if inputed node isn't smaller than its 2 generation descendants
-                swap(heap, i, minDescendantId);
+                swap(i, minDescendantId);
 
                 if(minDescendantId > getRightChildId(i)) { //check if minDescendantId is grandkid
 
-                    if(heap[minDescendantId] > heap[getParentId(minDescendantId)]) {
-                        swap(heap, getParentId(minDescendantId), minDescendantId);
+                    if(_heapArr[minDescendantId] > _heapArr[getParentId(minDescendantId)]) {
+                        swap(getParentId(minDescendantId), minDescendantId);
                     }
-                    heapify(heap, minDescendantId);
+                    heapify(minDescendantId);
                 }
             }
         }
@@ -99,7 +109,7 @@ public class MaxMinHeap {
         }
 
         _heapArr = newHeap;
-        heapify(_heapArr, i);
+        heapify(i);
     }
 
     public static int getRightChildId(int i) {
@@ -115,39 +125,91 @@ public class MaxMinHeap {
         return ((i - 1) / 2);
     }
 
+    public int getMaxDecendentIndex(int i) {
+        int[] descendants = new int[6];
+
+        descendants[0] = getLeftChildId(i);
+        descendants[1] = getRightChildId(i);
+        descendants[2] = getLeftChildId(descendants[0]);
+        descendants[3] = getRightChildId(descendants[0]);
+        descendants[4] = getLeftChildId(descendants[1]);
+        descendants[5] = getRightChildId(descendants[1]);
+
+        int max = _heapArr[i];
+        int maxIndex = i;
+        for(int k = 0; k < 6; k++) {
+
+            if(descendants[k] >= _heapArr.length) {
+                break;
+            }
+
+            if(_heapArr[descendants[k]] > max) {
+                max = _heapArr[descendants[k]];
+                maxIndex = descendants[k];
+            }
+        }
+        return maxIndex;
+    }
+
+    private int getMinDecendentIndex(int i) {
+        int[] descendants = new int[6];
+
+        descendants[0] = getLeftChildId(i);
+        descendants[1] = getRightChildId(i);
+        descendants[2] = getLeftChildId(descendants[0]);
+        descendants[3] = getRightChildId(descendants[0]);
+        descendants[4] = getLeftChildId(descendants[1]);
+        descendants[5] = getRightChildId(descendants[1]);
+
+        int min = _heapArr[i];
+        int minIndex = i;
+        for(int k = 0; k < 6; k++) {
+
+            if(descendants[k] >= _heapArr.length) {
+                break;
+            }
+
+            if(_heapArr[descendants[k]] < min) {
+                min = _heapArr[descendants[k]];
+                minIndex = descendants[k];
+            }
+        }
+        return minIndex;
+    }
+
     /**
-     * @param heap
+     * @param _heapArr
      * @param i
      * @param generations
      * @return
      */
-    public static int getMaxDescendantId(int[] heap, int i, int generations) {
-        if(generations == 0 || !(hasKids(heap, i))) {
-            return i;
-        }
+    // private int getMaxDescendantId(int[] heap, int i, int generations) {
+    //     if(generations == 0 || !(hasKids(heap, i))) {
+    //         return i;
+    //     }
 
-        int maxLeftId = getMaxDescendantId(heap, getLeftChildId(i), generations--);
-        int maxRightId;
-        if(getRightChildId(i) < heap.length) { //checking if i has two kids
+    //     int maxLeftId = getMaxDescendantId(heap, getLeftChildId(i), generations--);
+    //     int maxRightId;
+    //     if(getRightChildId(i) < heap.length) { //checking if i has two kids
 
-            maxRightId = getMaxDescendantId(heap, getRightChildId(i), generations--);
-            if(heap[i] <= heap[maxLeftId]) {
-                if(heap[i] <= heap[maxRightId]) {
-                    return i;
-                }
-                return maxRightId;
-            }
-            if(heap[maxLeftId] <= heap[maxRightId]) {
-                return maxLeftId;
-            }
-            return maxRightId;
-        }
+    //         maxRightId = getMaxDescendantId(heap, getRightChildId(i), generations--);
+    //         if(heap[i] <= heap[maxLeftId]) {
+    //             if(heap[i] <= heap[maxRightId]) {
+    //                 return i;
+    //             }
+    //             return maxRightId;
+    //         }
+    //         if(heap[maxLeftId] <= heap[maxRightId]) {
+    //             return maxLeftId;
+    //         }
+    //         return maxRightId;
+    //     }
 
-        if(heap[i] <= heap[maxLeftId]) {
-            return i;
-        }
-        return maxLeftId;
-    }
+    //     if(heap[i] <= heap[maxLeftId]) {
+    //         return i;
+    //     }
+    //     return maxLeftId;
+    // }
     
     /**
      * @param heap
@@ -155,111 +217,118 @@ public class MaxMinHeap {
      * @param generations
      * @return
      */
-    public static int getMinDescendantId(int[] heap, int i, int generations) {
+    // private int getMinDescendantId(int[] heap, int i, int generations) {
 
-        if(generations == 0 || !(hasKids(heap, i))) {
-            return i;
-        }
+    //     if(generations == 0 || !(hasKids(heap, i))) {
+    //         return i;
+    //     }
 
-        int minLeftId = getMinDescendantId(heap, getLeftChildId(i), generations--);
-        int minRightId;
-        if(getRightChildId(i) < heap.length) { //checking if i has two kids
+    //     int minLeftId = getMinDescendantId(heap, getLeftChildId(i), generations--);
+    //     int minRightId;
+    //     if(getRightChildId(i) < heap.length) { //checking if i has two kids
 
-            minRightId = getMinDescendantId(heap, getRightChildId(i), generations--);
-            if(heap[i] <= heap[minLeftId]) {
-                if(heap[i] <= heap[minRightId]) {
-                    return i;
-                }
-                return minRightId;
-            }
-            if(heap[minLeftId] <= heap[minRightId]) {
-                return minLeftId;
-            }
-            return minRightId;
-        }
+    //         minRightId = getMinDescendantId(heap, getRightChildId(i), generations--);
+    //         if(heap[i] <= heap[minLeftId]) {
+    //             if(heap[i] <= heap[minRightId]) {
+    //                 return i;
+    //             }
+    //             return minRightId;
+    //         }
+    //         if(heap[minLeftId] <= heap[minRightId]) {
+    //             return minLeftId;
+    //         }
+    //         return minRightId;
+    //     }
 
-        if(heap[i] <= heap[minLeftId]) {
-            return i;
-        }
-        return minLeftId;
-    }
+    //     if(heap[i] <= heap[minLeftId]) {
+    //         return i;
+    //     }
+    //     return minLeftId;
+    // }
 
     /**
-     * @param heap
+     * @param _heapArr
      * @param i
      * @param j
      */
-    public static void swap(int[] heap, int i, int j) {
-        int temp = heap[i];
-        heap[i] = heap[j];
-        heap[j] = temp;
+    public void swap(int i, int j) {
+        System.out.println(_heapArr[i] + " <-> " + _heapArr[j]);
+        int temp = _heapArr[i];
+        _heapArr[i] = _heapArr[j];
+        _heapArr[j] = temp;
     }
 
     /**
      * @param i
      * @return
      */
-    public static int getIdDepth(int i) {
+    public int getIdDepth(int i) {
+        if(i == 0) {
+            return 0;
+        }
         return (int) Math.floor(Math.log(i + 1) / Math.log(2));
     }
 
-    public static boolean hasKids(int[] heap, int i) {
-        return (getLeftChildId(i) > heap.length - 1);
+    private boolean hasKids(int i) {
+        return (getLeftChildId(i) < _heapArr.length);
     }
 
     public void setHeapArr(int[] newHeapArr) {
 
     }
 
-    public void prinTree(int[] heapArr) {
-    int maxDepth = getIdDepth(heapArr.length - 1);
+    // public void prinTree(int[] heapArr) {
+    // int maxDepth = getIdDepth(heapArr.length - 1);
 
-        String[] strArr = new String[heapArr.length];
-        for(int i = 0; i < heapArr.length; i++) {
-            strArr[i] = String.valueOf(heapArr[i]);
-        }
+    //     String[] strArr = new String[heapArr.length];
+    //     for(int i = 0; i < heapArr.length; i++) {
+    //         strArr[i] = String.valueOf(heapArr[i]);
+    //     }
 
-        int initialSpaces, spacesAfterNode, spacesBetweenLinks;
-        String currLine, nextLine;
-        String str1 = "/", str2 = "\\";
-        for(int j = 0; j <= maxDepth; j++) {
+    //     int initialSpaces, spacesAfterNode, spacesBetweenLinks, stopId;
+    //     String currLine, nextLine;
+    //     String str1 = "/", str2 = "\\";
+
+    //     for(int j = 0; j <= maxDepth + 1; j++) {
             
-            initialSpaces = 0;
-            for(int k = j + 1; k < maxDepth; k++) {
-                initialSpaces += strArr[getLevelStartId(k)].length() + 1;
-            }
+    //         initialSpaces = 0;
+    //         for(int k = j + 1; k <= maxDepth; k++) {
+    //             initialSpaces += strArr[getLevelStartId(k)].length() + 1;
+    //         }
 
-            currLine = String.format("%1$" + (initialSpaces + 1) + "s", "");
-            nextLine = String.format("%1$" + initialSpaces + "s", "");
+    //         currLine = String.format("%1$" + (initialSpaces + 1) + "s", "");     
+    //         nextLine = String.format("%1$" + Math.max(initialSpaces, 1) + "s", "");
 
-            for(int l = getLevelStartId(j); l < getLevelStartId(j + 1); l++) {
+    //         stopId = Math.min(getLevelStartId(j + 1), strArr.length);
 
-                spacesBetweenLinks = calcSpacedLinks(strArr, l);
+    //         for(int l = getLevelStartId(j); l < stopId; l++) {
 
-                if(isEven(l)) {
-                    if(spacesBetweenLinks > strArr[l].length() + 1) {
-                        currLine += String.format("%1$" + ((spacesBetweenLinks - strArr[l].length()) / 2) + "s", "");
-                    }
-                    currLine += strArr[l] + "";
-                    nextLine += str1 + String.format("%1$" + spacesBetweenLinks + "s", "") + str2;
-                }
-                else {
-                    spacesAfterNode = calcSpacesAfterOdd(strArr, l);
+    //             spacesBetweenLinks = calcSpacedLinks(strArr, l);
 
-                    currLine += strArr[l] + String.format("%1$" + spacesAfterNode + "s", "");
-                    nextLine += str1 + String.format("%1$" + spacesBetweenLinks + "s", "") + str2 + 
-                    String.format("%1$" + (spacesAfterNode - 2) + "s", "");
-                }
-            }
+    //             if(isEven(l)) {
+    //                 if(spacesBetweenLinks > strArr[l].length() + 1) {
+    //                     currLine += String.format("%1$" + ((spacesBetweenLinks - strArr[l].length()) / 2) + "s", "");
+    //                 }
+    //                 currLine += strArr[l] + " ";
+    //                 nextLine += str1 + String.format("%1$" + spacesBetweenLinks + "s", "") + str2;
+    //             }
+    //             else {
+    //                 spacesAfterNode = calcSpacesAfterOdd(strArr, l);
 
-            System.out.println(currLine);
-            if(j != maxDepth) {
-                System.out.println(nextLine);
-            }
-        } 
-    }
+    //                 currLine += strArr[l] + String.format("%1$" + spacesAfterNode + "s", "");
+    //                 nextLine += str1 + String.format("%1$" + spacesBetweenLinks + "s", "") + str2 + 
+    //                 String.format("%1$" + (spacesAfterNode - 2) + "s", "");
+    //             }
+    //         }
 
-    public static boolean isEven(int num) {
+    //         System.out.println(currLine);
+    //         if(j != maxDepth) {
+    //             System.out.println(nextLine);
+    //         }
+    //     } 
+    // }
+
+    private boolean isEven(int num) {
         return (num % 2 == 0);
     }
 
@@ -267,34 +336,34 @@ public class MaxMinHeap {
         return (int) Math.pow(2, level) - 1;
     }
 
-    public static int calcSpacedLinks(String[] heap, int i) {
-        int grandKid1Length = 0, grandKid2Length = 0;
+    // private int calcSpacedLinks(String[] int i) {
+    //     int grandKid1Length = 0, grandKid2Length = 0;
 
-        int grandKid1Id = getLeftChildId(getRightChildId(i)), 
-        grandKid2Id = getRightChildId(getLeftChildId(i));
+    //     int grandKid1Id = getLeftChildId(getRightChildId(i)), 
+    //     grandKid2Id = getRightChildId(getLeftChildId(i));
 
-        if(grandKid1Id < heap.length) {
-            grandKid1Length = heap[grandKid1Id].length();
-        }
-        if(grandKid2Id < heap.length) {
-            grandKid2Length = heap[grandKid2Id].length();
-        }
+    //     if(grandKid1Id < _heapArr.length) {
+    //         grandKid1Length = _heapArr[grandKid1Id].length();
+    //     }
+    //     if(grandKid2Id < _heapArr.length) {
+    //         grandKid2Length = _heapArr[grandKid2Id].length();
+    //     }
 
-        return Math.max(heap[i].length(), grandKid1Length + grandKid2Length + 1);
-    }
+    //     return Math.max(_heapArr[i].length(), grandKid1Length + grandKid2Length + 1);
+    // }
 
-    public int calcSpacesAfterOdd(String[] heap, int i) {
-        int rightLength = 0, otherNodeLength = 0;
+    // private int calcSpacesAfterOdd(String[] int i) {
+    //     int rightLength = 0, otherNodeLength = 0;
 
-        int rightId = getRightChildId(i), otherNodeId = getLeftChildId(i + 1);
+    //     int rightId = getRightChildId(i), otherNodeId = getLeftChildId(i + 1);
 
-        if(rightId < heap.length) {
-            rightLength = heap[rightId].length();
-        }
-        if(otherNodeId < heap.length) {
-            otherNodeLength = heap[otherNodeId].length();
-        }
+    //     if(rightId < _heapArr.length) {
+    //         rightLength = _heapArr[rightId].length();
+    //     }
+    //     if(otherNodeId < _heapArr.length) {
+    //         otherNodeLength = _heapArr[otherNodeId].length();
+    //     }
 
-        return Math.max(heap[getParentId(i)].length(), rightLength + otherNodeLength + 1) + 2;
-    }
+    //     return Math.max(_heapArr[getParentId(i)].length(), rightLength + otherNodeLength + 1) + 2;
+    // }
 }
