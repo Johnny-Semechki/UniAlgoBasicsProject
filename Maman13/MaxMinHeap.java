@@ -20,6 +20,7 @@ public class MaxMinHeap {
     private int[] _heapArr;
     private int _heapDepth;
 
+
     public MaxMinHeap() {
         int[] _heapArr = {12, 5, 11, 3, 10, 2, 9, 4, 8, 15, 7, 6};
 
@@ -46,9 +47,15 @@ public class MaxMinHeap {
         }
     }
 
+    /**
+     * @param heap
+     * @param i
+     */
     public void maxHeapify(int i) {
         if(hasKids(i)) {
             int maxDescendantId = getMaxDecendentIndex(i);
+
+    
 
             if(maxDescendantId != i) { //Check if inputed node isn't bigger than its 2 generation descendants
                 swap(i, maxDescendantId);
@@ -64,6 +71,10 @@ public class MaxMinHeap {
         }
     }
 
+    /**
+     * @param heap
+     * @param i
+     */
     public void minHeapify(int i) {  
         if(hasKids(i)) {
             int minDescendantId = getMinDecendentIndex(i);
@@ -107,9 +118,6 @@ public class MaxMinHeap {
             newHeap[k] = _heapArr[j];
             j++;
         }
-
-        _heapArr = newHeap;
-        heapify(i);
     }
 
     public static int getRightChildId(int i) {
@@ -274,7 +282,10 @@ public class MaxMinHeap {
     }
 
     public void setHeapArr(int[] newHeapArr) {
-
+        _heapArr = new int[newHeapArr.length];
+        for(int i = 0; i < _heapArr.length; i++) {
+            _heapArr[i] = newHeapArr[i];
+        }
     }
 
     // public void prinTree(int[] heapArr) {
