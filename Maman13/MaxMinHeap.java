@@ -24,10 +24,6 @@ public class MaxMinHeap {
 
     private int[] _heapArr;
 
-    /**
-     * @param csvFileName
-     * @throws FileNotFoundException
-     */
     public MaxMinHeap(String csvFileName) throws FileNotFoundException {
         Scanner sc = new Scanner(new File(csvFileName));
 
@@ -79,6 +75,10 @@ public class MaxMinHeap {
      * @param i
      */
     public void heapify(int i) {
+        if(i >= _heapArr.length) {
+            System.out.println("Invalid heap index input");
+            return;
+        }
 
         if(isEven(getIdDepth(i))) {
             maxHeapify(i);
@@ -93,6 +93,11 @@ public class MaxMinHeap {
      * @param i
      */
     public void maxHeapify(int i) {
+        if(i >= _heapArr.length) {
+            System.out.println("Invalid heap index input");
+            return;
+        }
+
         if(hasKids(i)) {
             int maxDescendantId = getMaxDecendentIndex(i);
 
@@ -115,6 +120,11 @@ public class MaxMinHeap {
      * @param i
      */
     public void minHeapify(int i) {  
+        if(i >= _heapArr.length) {
+            System.out.println("Invalid heap index input");
+            return;
+        }
+
         if(hasKids(i)) {
             int minDescendantId = getMinDecendentIndex(i);
 
@@ -150,6 +160,10 @@ public class MaxMinHeap {
         reverseHeapify(keyIndex);
     }
     private void reverseHeapify(int keyIndex) {
+        if(keyIndex >= _heapArr.length) {
+            System.out.println("Invalid heap index input");
+            return;
+        }
         if(hasGrandparent(keyIndex)) {
             if(isEven(getIdDepth(keyIndex))) {
                 if(_heapArr[keyIndex] < _heapArr[getParentId(keyIndex)]) {
@@ -177,6 +191,11 @@ public class MaxMinHeap {
         }
     }
     private void reverseMinHeapify(int i) {
+        if(i >= _heapArr.length) {
+            System.out.println("Invalid heap index input");
+            return;
+        }
+
         while (hasGrandparent(i) && _heapArr[i] < _heapArr[getParentId(getParentId(i))]) {
             swap(i, getParentId(getParentId(i)));
             i = getParentId(getParentId(i));
@@ -207,39 +226,30 @@ public class MaxMinHeap {
             reverseHeapify(i);
             heapify(i);
         }
-
-        // if(isEven(getIdDepth(i))) {
-        //     while(hasGrandkids(i)) {
-        //         swap(i, getMaxGrandkidIndex(i));
-        //         i = getMaxGrandkidIndex(i);
-        //     }
-
-        //     if(hasKids(i)) {
-        //         int maxKid = getMaxDecendentIndex(i);
-        //         if(_heapArr[lastNodeIndex] >= _heapArr[maxKid]) {
-        //             swap(lastNodeIndex, i);
-        //             reverseHeapify(i);
-        //         }
-        //         else {
-        //             swap(lastNodeIndex, i);
-        //             swap(i, maxKid);
-        //         }
-        //     }
-        //     else {
-        //         swap(lastNodeIndex, i);
-        //         reverseHeapify(i);
-        //     }
-        // }
-
     }
 
-    public static int getRightChildId(int i) {
+    public int getRightChildId(int i) {
+        if(i >= _heapArr.length) {
+            System.out.println("Invalid heap index input");
+            return 0;
+        }
+
         return i * 2 + 2;
     }
-    public static int getLeftChildId(int i) {
+    public int getLeftChildId(int i) {
+        if(i >= _heapArr.length) {
+            System.out.println("Invalid heap index input");
+            return 0;
+        }
+
         return i * 2 + 1;
     }
-    public static int getParentId(int i) {
+    public int getParentId(int i) {
+        if(i >= _heapArr.length) {
+            System.out.println("Invalid heap index input");
+            return 0;
+        }
+
         if(i % 2 == 0) {
             return ((i - 2) / 2);
         }
@@ -247,6 +257,11 @@ public class MaxMinHeap {
     }
 
     private int getMaxDecendentIndex(int i) {
+        if(i >= _heapArr.length) {
+            System.out.println("Invalid heap index input");
+            return 0;
+        }
+
         int[] descendants = new int[6];
 
         descendants[0] = getLeftChildId(i);
@@ -296,6 +311,11 @@ public class MaxMinHeap {
     // }
 
     private int getMinDecendentIndex(int i) {
+        if(i >= _heapArr.length) {
+            System.out.println("Invalid heap index input");
+            return 0;
+        }
+
         int[] descendants = new int[6];
 
         descendants[0] = getLeftChildId(i);
@@ -419,6 +439,11 @@ public class MaxMinHeap {
      * @param j
      */
     public void swap(int i, int j) {
+        if(i >= _heapArr.length || j >= _heapArr.length) {
+            System.out.println("Invalid heap index input");
+            return;
+        }
+
         System.out.println("Swapping " + _heapArr[i] + " <-> " + _heapArr[j]);
         int temp = _heapArr[i];
         _heapArr[i] = _heapArr[j];
@@ -430,6 +455,11 @@ public class MaxMinHeap {
      * @return
      */
     public int getIdDepth(int i) {
+        if(i >= _heapArr.length) {
+            System.out.println("Invalid heap index input");
+            return 0;
+        }
+
         if(i == 0) {
             return 0;
         }
@@ -437,6 +467,11 @@ public class MaxMinHeap {
     }
 
     private boolean hasKids(int i) {
+        if(i >= _heapArr.length) {
+            System.out.println("Invalid heap index input");
+            return false;
+        }
+
         return (getLeftChildId(i) < _heapArr.length);
     }
     private boolean hasGrandkids(int i) {
