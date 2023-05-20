@@ -51,6 +51,14 @@ public class MaxMinHeap {
         initHeap(initArray);
     }
 
+    public MaxMinHeap(int[] initArray, boolean print) {
+        if(print) {
+            _heapArr = initArray;
+            prinTree();
+        }
+        initHeap(initArray);
+    }
+
     private void initHeap(int[] initArray) {
         _heapArr = initArray;
 
@@ -472,7 +480,7 @@ public class MaxMinHeap {
 
         int initialSpaces, spacesAfterNode, spacesBetweenLinks, stopId;
         String currLine, nextLine;
-        String str1 = "/", str2 = "\\";
+        String slash = "/", backslash = "\\";
 
         for(int j = 0; j <= maxDepth + 1; j++) {
             
@@ -495,13 +503,16 @@ public class MaxMinHeap {
                         currLine += String.format("%1$" + ((spacesBetweenLinks - strArr[l].length()) / 2) + "s", "");
                     }
                     currLine += strArr[l] + " ";
-                    nextLine += str1 + String.format("%1$" + spacesBetweenLinks + "s", "") + str2;
+                    nextLine += slash + String.format("%1$" + spacesBetweenLinks + "s", "") + backslash;
                 }
                 else {
+                    if(spacesBetweenLinks > strArr[l].length() + 1) {
+                        currLine += String.format("%1$" + ((spacesBetweenLinks - strArr[l].length()) / 2) + "s", "");
+                    }
                     spacesAfterNode = calcSpacesAfterOdd(strArr, l);
 
                     currLine += strArr[l] + String.format("%1$" + spacesAfterNode + "s", "");
-                    nextLine += str1 + String.format("%1$" + spacesBetweenLinks + "s", "") + str2 + 
+                    nextLine += slash + String.format("%1$" + spacesBetweenLinks + "s", "") + backslash + 
                     String.format("%1$" + (spacesAfterNode - 2) + "s", "");
                 }
             }
@@ -550,5 +561,9 @@ public class MaxMinHeap {
         }
 
         return Math.max(heapArr[getParentId(i)].length(), rightLength + otherNodeLength + 1) + 2;
+    }
+
+    public int[] getHeapArr() {
+        return _heapArr;
     }
 }
